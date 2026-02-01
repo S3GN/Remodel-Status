@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Settings, Globe, CheckSquare, Square, AlertCircle, Camera, Eye, EyeOff } from 'lucide-react';
-import { toPng } from 'html-to-image';
+import { toJpeg } from 'html-to-image';
 import H2C from './components/h2c';   // 📸 캡처 컴포넌트 추가
 
 const SHIP_GROUPS = [
@@ -20,21 +20,27 @@ const UI_TEXT = {
     notOwned: "미보유",
     levelingDone: "레벨링 완료",
     guide: "카드를 클릭하면 <strong>개장 완료</strong> 처리됩니다.",
-    viewAll: "전체 보기", viewIncomplete: "미개장만 보기", exportImage: "이미지 저장"
+    viewAll: "전체 보기", viewIncomplete: "미개장만 보기", exportImage: "이미지 저장",
+    disclaimer: "※ 본 툴은 비공식 2차 창작물이며, 데이터 오류 및 사용상의 불이익에 대해 책임지지 않습니다.",
+    contact: "오류 제보 및 문의:"
   },
   jp: { 
     title: "改装設計図管理表", 
     notOwned: "未保有",
     levelingDone: "レベリング完了",
     guide: "カードをクリックすると<strong>改装完了</strong>になります。",
-    viewAll: "すべて表示", viewIncomplete: "未改装のみ", exportImage: "画像保存"
+    viewAll: "すべて表示", viewIncomplete: "未改装のみ", exportImage: "画像保存",
+    disclaimer: "※ 本ツールは非公式であり、使用による不利益について一切の責任を負いません。",
+    contact: "お問い合わせ:"
   },
   en: { 
     title: "Ship Remodel Status", 
     notOwned: "Not Owned",
     levelingDone: "Leveling Done",
     guide: "Click card to mark as <strong>Remodel Complete</strong>.",
-    viewAll: "Show All", viewIncomplete: "Incomplete Only", exportImage: "Save Image"
+    viewAll: "Show All", viewIncomplete: "Incomplete Only", exportImage: "Save Image",
+    disclaimer: "※ Unofficial tool. No responsibility is taken for errors or issues caused by use.",
+    contact: "Contact/Report:"
   }
 };
 
@@ -83,7 +89,7 @@ function ShipCard({ ship, userData, language, onToggleState, isExportMode = fals
       {/* 1. 좌측 이미지 영역 */}
       <div className="w-32 md:w-64 h-full flex-shrink-0 border-r border-[#e5e7eb] relative bg-[#f3f4f6]"> {/* border-gray-200, bg-gray-100 */}
         <img 
-          src={`/ships/${imageFileName}.png`} 
+          src={`${import.meta.env.BASE_URL}ships/${imageFileName}.png`} 
           alt={displayName}
           className="h-full w-full object-cover object-center"
           onError={(e) => {
@@ -117,7 +123,7 @@ function ShipCard({ ship, userData, language, onToggleState, isExportMode = fals
               return (
                 <div key={key} className="flex items-center gap-1.5">
                   <img 
-                    src={`/items/${MATERIAL_ICONS[key]}`} 
+                    src={`${import.meta.env.BASE_URL}items/${MATERIAL_ICONS[key]}`} 
                     className={`w-6 h-6 object-contain drop-shadow-sm ${isRemodelDone ? 'opacity-50' : ''}`} 
                     alt={key} 
                   />
@@ -163,30 +169,6 @@ function ShipCard({ ship, userData, language, onToggleState, isExportMode = fals
   );
 }
 
-// ... (KanColleBlueprintTable 컴포넌트의 나머지는 그대로 유지하되, handleExportImage 함수는 아래를 사용하세요) ...
-
-  const handleExportImage = async () => {
-    const element = document.getElementById('export-target');
-    if (!element) return;
-    try {
-      const dataUrl = await toPng(element, { 
-        cacheBust: true,
-        backgroundColor: '#ffffff',
-        pixelRatio: 2,
-        skipAutoScale: true,
-        fontEmbedCSS: '', 
-        // 🔥 style 옵션 삭제함 (이제 필요 없음)
-      });
-
-      const link = document.createElement('a');
-      link.download = `kancolle-plan-${new Date().toISOString().slice(0,10)}.png`;
-      link.href = dataUrl;
-      link.click();
-    } catch (err) {
-      console.error("Capture failed:", err);
-      alert("이미지 저장 실패: " + err.message);
-    }
-  };
 
 // ==================================================
 // 🚀 메인 앱
@@ -201,7 +183,7 @@ export default function KanColleBlueprintTable() {
   const [showIncompleteOnly, setShowIncompleteOnly] = useState(false); // 📸 필터 상태 추가
 
   useEffect(() => {
-    fetch('/ships.csv').then(res => res.text()).then(text => {
+    fetch(`${import.meta.env.BASE_URL}data/ships.csv`).then(res => res.text()).then(text => {
       const lines = text.trim().split('\n');
       const loadedShips = lines.map((line) => {
         const cols = line.split(',').map(c => c.trim());
@@ -260,9 +242,10 @@ export default function KanColleBlueprintTable() {
     if (!element) return;
 
     try {
-      const dataUrl = await toPng(element, { 
+      const dataUrl = await toJpeg(element, { 
         cacheBust: true,
         backgroundColor: '#ffffff',
+        quality: 0.9,
         pixelRatio: 2,
         // 🔥 [중요] 폰트 파싱 오류 방지 옵션들
         skipAutoScale: true, 
@@ -270,7 +253,7 @@ export default function KanColleBlueprintTable() {
       });
 
       const link = document.createElement('a');
-      link.download = `kancolle-plan-${new Date().toISOString().slice(0,10)}.png`;
+      link.download = `kancolle-plan-${new Date().toISOString().slice(0,10)}.jpg`;
       link.href = dataUrl;
       link.click();
     } catch (err) {
@@ -297,38 +280,56 @@ export default function KanColleBlueprintTable() {
 
       <div className="max-w-5xl mx-auto">
 
-        {/* 🔥 상단 컨트롤 바 (필터/저장/언어) */}
-        <div className="flex justify-end gap-3 mb-3">
-          {/* 필터 버튼 */}
-          <button 
-            onClick={() => setShowIncompleteOnly(!showIncompleteOnly)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-bold transition-all shadow-sm ${showIncompleteOnly ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200'}`}
-          >
-            {showIncompleteOnly ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            {showIncompleteOnly ? UI_TEXT[language].viewIncomplete : UI_TEXT[language].viewAll}
-          </button>
-          {/* 저장 버튼 */}
-          <button 
-            onClick={handleExportImage}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-700 text-sm font-bold hover:bg-gray-50 hover:text-blue-600 shadow-sm"
-          >
-            <Camera className="w-4 h-4" />
-            {UI_TEXT[language].exportImage}
-          </button>
-          {/* 언어 선택 */}
-          <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-200 hover:border-blue-400 hover:shadow-sm transition-all cursor-pointer">
-            <Globe className="w-4 h-4 text-gray-500" />
-            <select 
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="bg-transparent text-sm font-bold outline-none text-gray-700 cursor-pointer appearance-none pr-1"
-            >
-              <option value="kr">한국어</option>
-              <option value="jp">日本語</option>
-              <option value="en">English</option>
-            </select>
+      {/* 🔥 상단 컨트롤 바 (면책조항 + 필터/저장/언어) */}
+        <div className="flex flex-col md:flex-row justify-between items-end gap-3 mb-3">
+          
+          {/* [추가된 부분] 좌측: 면책 조항 및 이메일 */}
+          <div className="text-xs text-gray-400 leading-relaxed mb-1 md:mb-0 text-left w-full md:w-auto">
+            <p>{UI_TEXT[language].disclaimer}</p>
+            <p className="flex items-center gap-1">
+              {UI_TEXT[language].contact} 
+              <span className="font-mono text-gray-500 select-all hover:text-blue-500 cursor-pointer transition-colors">
+                {/* 👇 여기에 아까 만드신 이메일 주소를 넣으세요! */}
+                shou3n@proton.me
+              </span>
+            </p>
           </div>
-        </div>        
+
+          {/* 우측: 버튼 그룹 (기존 버튼들을 div로 한 번 감싸줍니다) */}
+          <div className="flex items-center gap-3 self-end">
+            {/* 필터 버튼 */}
+            <button 
+              onClick={() => setShowIncompleteOnly(!showIncompleteOnly)}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-bold transition-all shadow-sm ${showIncompleteOnly ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200'}`}
+            >
+              {showIncompleteOnly ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              {showIncompleteOnly ? UI_TEXT[language].viewIncomplete : UI_TEXT[language].viewAll}
+            </button>
+            
+            {/* 저장 버튼 */}
+            <button 
+              onClick={handleExportImage}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-700 text-sm font-bold hover:bg-gray-50 hover:text-blue-600 shadow-sm"
+            >
+              <Camera className="w-4 h-4" />
+              {UI_TEXT[language].exportImage}
+            </button>
+            
+            {/* 언어 선택 */}
+            <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-200 hover:border-blue-400 hover:shadow-sm transition-all cursor-pointer">
+              <Globe className="w-4 h-4 text-gray-500" />
+              <select 
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                className="bg-transparent text-sm font-bold outline-none text-gray-700 cursor-pointer appearance-none pr-1"
+              >
+                <option value="kr">한국어</option>
+                <option value="jp">日本語</option>
+                <option value="en">English</option>
+              </select>
+            </div>
+          </div>
+        </div>
         
         {/* === 헤더 (기존 디자인 유지) === */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 mb-8 sticky top-4 z-30 flex flex-wrap justify-between items-center gap-6 backdrop-blur-md bg-white/95">
@@ -345,19 +346,19 @@ export default function KanColleBlueprintTable() {
           <div className="flex items-center gap-4">
             <div className="flex gap-6 text-sm font-bold bg-gray-50 px-6 py-3 rounded-xl border border-gray-200">
               <div className="flex items-center gap-2">
-                <img src="/items/blueprint.png" className="w-6 h-6 object-contain" alt="BP" />
+                <img src={`${import.meta.env.BASE_URL}items/blueprint.png`} className="w-6 h-6 object-contain" alt="BP" />
                 <span className="text-blue-700 text-lg">{stats.bp}</span>
               </div>
               <div className="w-px bg-gray-300 h-5"></div>
               <div className="flex items-center gap-2">
-                <img src="/items/report.png" className="w-6 h-6 object-contain" alt="Report" />
+                <img src={`${import.meta.env.BASE_URL}items/report.png`} className="w-6 h-6 object-contain" alt="Report" />
                 <span className="text-orange-700 text-lg">{stats.report}</span>
               </div>
               {stats.catapult > 0 && (
                 <>
                   <div className="w-px bg-gray-300 h-5"></div>
                   <div className="flex items-center gap-2">
-                    <img src="/items/catapult.png" className="w-6 h-6 object-contain" alt="Cat" />
+                    <img src={`${import.meta.env.BASE_URL}items/catapult.png`} className="w-6 h-6 object-contain" alt="Cat" />
                     <span className="text-purple-700 text-lg">{stats.catapult}</span>
                   </div>
                 </>

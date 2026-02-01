@@ -44,7 +44,7 @@ export default function H2C({
         {/* 1. 왼쪽: 함선 이미지 */}
         <div className="w-[200px] h-[50px] flex-shrink-0 relative border-r border-[#f3f4f6]">
           <img 
-            src={`/ships/${imageFileName}.png`} 
+            src={`${import.meta.env.BASE_URL}ships/${imageFileName}.png`} 
             alt={displayName}
             className="h-full w-full object-cover object-center" 
             crossOrigin="anonymous"
@@ -79,7 +79,7 @@ export default function H2C({
               if (count <= 0) return null;
               return (
                 <div key={key} className="flex items-center gap-1 flex-shrink-0">
-                  <img src={`/items/${MATERIAL_ICONS[key]}`} className="w-6 h-6 object-contain" alt={key} />
+                  <img src={`${import.meta.env.BASE_URL}items/${MATERIAL_ICONS[key]}`} className="w-6 h-6 object-contain" alt={key} />
                   <span className="text-[13px] font-bold text-[#374151] font-mono leading-none">{count}</span>
                 </div>
               );
@@ -146,9 +146,9 @@ export default function H2C({
           </div>
           
           <div className="flex gap-6 text-base font-bold bg-[#f9fafb] px-6 py-3 rounded-lg border border-[#e5e7eb]">
-             <div className="flex items-center gap-2"><img src="/items/blueprint.png" className="w-6 h-6 object-contain"/> <span className="text-[#1d4ed8] text-xl">{stats.bp}</span></div>
-             <div className="flex items-center gap-2"><img src="/items/report.png" className="w-6 h-6 object-contain"/> <span className="text-[#c2410c] text-xl">{stats.report}</span></div>
-             {stats.catapult > 0 && <div className="flex items-center gap-2"><img src="/items/catapult.png" className="w-6 h-6 object-contain"/> <span className="text-[#7e22ce] text-xl">{stats.catapult}</span></div>}
+             <div className="flex items-center gap-2"><img src={`${import.meta.env.BASE_URL}items/blueprint.png`} className="w-6 h-6 object-contain"/> <span className="text-[#1d4ed8] text-xl">{stats.bp}</span></div>
+             <div className="flex items-center gap-2"><img src={`${import.meta.env.BASE_URL}items/report.png`} className="w-6 h-6 object-contain"/> <span className="text-[#c2410c] text-xl">{stats.report}</span></div>
+             {stats.catapult > 0 && <div className="flex items-center gap-2"><img src={`${import.meta.env.BASE_URL}items/catapult.png`} className="w-6 h-6 object-contain"/> <span className="text-[#7e22ce] text-xl">{stats.catapult}</span></div>}
           </div>
         </div>
         
