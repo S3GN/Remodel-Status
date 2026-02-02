@@ -22,7 +22,8 @@ const UI_TEXT = {
     guide: "카드를 클릭하면 <strong>개장 완료</strong> 처리됩니다.",
     viewAll: "전체 보기", viewIncomplete: "미개장만 보기", exportImage: "이미지 저장",
     disclaimer: "※ 본 툴은 비공식 2차 창작물이며, 데이터 오류 및 사용상의 불이익에 대해 책임지지 않습니다.",
-    contact: "오류 제보 및 문의:"
+    contact: "오류 제보 및 문의:",
+    serverNotice: "데이터는 서버에 저장되지 않습니다 | Google Analytics 사용"
   },
   jp: { 
     title: "改装設計図管理表", 
@@ -31,7 +32,8 @@ const UI_TEXT = {
     guide: "カードをクリックすると<strong>改装完了</strong>になります。",
     viewAll: "すべて表示", viewIncomplete: "未改装のみ", exportImage: "画像保存",
     disclaimer: "※ 本ツールは非公式であり、使用による不利益について一切の責任を負いません。",
-    contact: "お問い合わせ:"
+    contact: "お問い合わせ:",
+    serverNotice: "データはサーバーに保存されません | Google Analytics使用"
   },
   en: { 
     title: "Ship Remodel Status", 
@@ -40,7 +42,8 @@ const UI_TEXT = {
     guide: "Click card to mark as <strong>Remodel Complete</strong>.",
     viewAll: "Show All", viewIncomplete: "Incomplete Only", exportImage: "Save Image",
     disclaimer: "※ Unofficial tool. No responsibility is taken for errors or issues caused by use.",
-    contact: "Contact/Report:"
+    contact: "Contact/Report:",
+    serverNotice: "Data is not saved on server | Google Analytics used"
   }
 };
 
@@ -411,6 +414,12 @@ export default function KanColleBlueprintTable() {
               </div>
             );
           })}
+        </div>
+        <div className="mt-20 mb-10 text-center border-t border-gray-200 pt-8">
+          <p className="text-xs text-gray-400 flex flex-col items-center gap-1">
+            <span>{UI_TEXT[language].serverNotice}</span>
+            <span className="opacity-50">© 2026 S3GN</span>
+          </p>
         </div>
       </div>
     </div>
