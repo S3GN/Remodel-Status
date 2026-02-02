@@ -60,7 +60,7 @@ export default function H2C({
         <div className="flex-1 flex flex-col justify-between px-3 py-1 min-w-0 bg-[#ffffff] whitespace-nowrap border-b border-[#e5e7eb]">
           
           {/* 윗줄: 이름 + 레벨 */}
-          <div className="flex items-center gap-2 leading-none">
+          <div className="flex items-center gap-2 leading-tight">
             <div className="flex items-center gap-1.5 flex-1 min-w-[140px] overflow-hidden">
               <span className={`text-[14px] font-bold -mt-0.5 ${isRemodelDone ? 'line-through text-[#9ca3af]' : 'text-[#1f2937]'}`}>
                 {displayName}

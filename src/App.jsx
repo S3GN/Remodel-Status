@@ -215,6 +215,10 @@ export default function KanColleBlueprintTable() {
   useEffect(() => {
     localStorage.setItem("kancolle_user_data_v8", JSON.stringify(userData));
   }, [userData]);
+  
+  useEffect(() => {
+    document.title = UI_TEXT[language].title;
+  }, [language]);
 
   const toggleState = (id, field) => {
     setUserData(prev => ({
