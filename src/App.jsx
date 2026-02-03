@@ -23,7 +23,7 @@ const UI_TEXT = {
     viewAll: "전체 보기", viewIncomplete: "미개장만 보기", exportImage: "이미지 저장",
     disclaimer: "※ 본 툴은 비공식 2차 창작물이며, 데이터 오류 및 사용상의 불이익에 대해 책임지지 않습니다.",
     contact: "오류 제보 및 문의:",
-    serverNotice: "데이터는 서버에 저장되지 않습니다 | Google Analytics 사용"
+    serverNotice: "데이터는 서버에 저장되지 않습니다 | 익명 통계 수집"
   },
   jp: { 
     title: "改装設計図管理表", 
@@ -33,7 +33,7 @@ const UI_TEXT = {
     viewAll: "すべて表示", viewIncomplete: "未改装のみ", exportImage: "画像保存",
     disclaimer: "※ 本ツールは非公式であり、使用による不利益について一切の責任を負いません。",
     contact: "お問い合わせ:",
-    serverNotice: "データはサーバーに保存されません | Google Analytics使用"
+    serverNotice: "データはサーバーに保存されません | 匿名統計収集"
   },
   en: { 
     title: "Ship Remodel Status", 
@@ -43,7 +43,7 @@ const UI_TEXT = {
     viewAll: "Show All", viewIncomplete: "Incomplete Only", exportImage: "Save Image",
     disclaimer: "※ Unofficial tool. No responsibility is taken for errors or issues caused by use.",
     contact: "Contact/Report:",
-    serverNotice: "Data is not saved on server | Google Analytics used"
+    serverNotice: "Data is not saved on server | Anonymous Statistics"
   }
 };
 
