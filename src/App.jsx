@@ -58,7 +58,8 @@ const MATERIAL_ICONS = {
   torch: "torch.png",
   boiler: "boiler.png",
   osmat: "os.png",
-  screw: "screw.png"
+  screw: "screw.png",
+  arsenal: "arsenal.png"
 };
 
 // ==================================================
@@ -207,7 +208,8 @@ export default function KanColleBlueprintTable() {
             torch: Number(cols[13]) || 0,
             boiler: Number(cols[14]) || 0,
             osmat: Number(cols[15]) || 0,
-            screw: Number(cols[16]) || 0
+            screw: Number(cols[16]) || 0,
+            arsenal: Number(cols[17]) || 0
           }
         };
       }).filter(item => item !== null);
