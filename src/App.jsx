@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Settings, Globe, CheckSquare, Square, AlertCircle, Camera, Eye, EyeOff } from 'lucide-react';
-import { toJpeg } from 'html-to-image';
-import H2C from './components/h2c';   // 📸 캡처 컴포넌트 추가
+import { domToJpeg } from 'modern-screenshot';
+import H2C from './components/h2c'; 
 
 const SHIP_GROUPS = [
   { title: "BB/BC", types: ["BB", "FBB", "BBV", "XBB"] },
@@ -124,14 +124,21 @@ function ShipCard({ ship, userData, language, onToggleState, isExportMode = fals
           <div className="flex flex-wrap gap-4 items-center">
             {Object.entries(ship.materials).map(([key, count]) => {
               if (count <= 0) return null;
+
+              // 🔥 [핵심 자동 분기] 기존 파일명이면 public 경로를 쓰고, Vite 변수면 그대로 출력!
+              const iconData = MATERIAL_ICONS[key];
+              const imagePath = (typeof iconData === 'string' && iconData.endsWith('.png') && !iconData.includes('/'))
+                ? `${import.meta.env.BASE_URL}items/${iconData}`
+                : iconData;
+
               return (
                 <div key={key} className="flex items-center gap-1.5">
                   <img 
-                    src={`${import.meta.env.BASE_URL}items/${MATERIAL_ICONS[key]}`} 
+                    src={imagePath} 
                     className={`w-6 h-6 object-contain drop-shadow-sm ${isRemodelDone ? 'opacity-50' : ''}`} 
                     alt={key} 
                   />
-                  <span className={`text-lg ${isRemodelDone ? 'text-[#9ca3af]' : 'text-[#1f2937]'}`}> {/* text-gray-400, text-gray-800 */}
+                  <span className={`text-lg ${isRemodelDone ? 'text-[#9ca3af]' : 'text-[#1f2937]'}`}>
                     {count}
                   </span>
                 </div>
@@ -245,31 +252,28 @@ export default function KanColleBlueprintTable() {
       }), { bp: 0, report: 0, catapult: 0 });
   }, [masterShips, userData]);
 
-  // 📸 이미지 내보내기 핸들러 (수정됨)
+  // 📸 이미지 내보내기
   const handleExportImage = async () => {
-    const element = document.getElementById('export-target');
-    if (!element) return;
+      const element = document.getElementById('export-target');
+      if (!element) return;
 
-    try {
-      const dataUrl = await toJpeg(element, { 
-        cacheBust: true,
-        backgroundColor: '#ffffff',
-        quality: 0.9,
-        pixelRatio: 2,
-        // 🔥 [중요] 폰트 파싱 오류 방지 옵션들
-        skipAutoScale: true, 
-        fontEmbedCSS: '', // 폰트 강제 삽입 시도 중단 (index.html에서 불러오므로 괜찮음)
-      });
+      try {
+        // domToJpeg는 oklch 색상도 완벽히 이해하고, 이미지 로딩도 알아서 기다려줍니다.
+        const dataUrl = await domToJpeg(element, {
+          backgroundColor: '#ffffff',
+          scale: 2,
+        });
 
-      const link = document.createElement('a');
-      link.download = `kancolle-plan-${new Date().toISOString().slice(0,10)}.jpg`;
-      link.href = dataUrl;
-      link.click();
-    } catch (err) {
-      console.error("Capture failed:", err);
-      alert("이미지 저장 실패: " + err.message);
-    }
-  };
+        const link = document.createElement('a');
+        link.download = `kancolle-plan-${new Date().toISOString().slice(0,10)}.jpg`;
+        link.href = dataUrl;
+        link.click();
+        
+      } catch (err) {
+        console.error("Capture failed:", err);
+        alert("이미지 저장 실패: " + err.message);
+      }
+    };
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8 font-['Noto_Sans_JP','Noto_Sans_KR',sans-serif] text-gray-900 pb-20">

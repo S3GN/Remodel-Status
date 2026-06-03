@@ -11,7 +11,8 @@ const MATERIAL_ICONS = {
   torch: "torch.png",
   boiler: "boiler.png",
   osmat: "os.png",
-  screw: "screw.png"
+  screw: "screw.png",
+  arsenal: "arsenal.png"
 };
 
 export default function H2C({ 
