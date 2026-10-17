@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Settings, Globe, CheckSquare, Square, AlertCircle, Camera, Eye, EyeOff } from 'lucide-react';
-import { domToJpeg } from 'modern-screenshot';
+import { domToWebp } from 'modern-screenshot';
 import H2C from './components/h2c'; 
 
 const SHIP_GROUPS = [
@@ -258,14 +258,16 @@ export default function KanColleBlueprintTable() {
       if (!element) return;
 
       try {
-        // domToJpeg는 oklch 색상도 완벽히 이해하고, 이미지 로딩도 알아서 기다려줍니다.
-        const dataUrl = await domToJpeg(element, {
+        // WEBP로 저장 (용량 절감). WEBP 인코딩 미지원 브라우저는 PNG로 떨어지므로 확장자를 맞춰줍니다.
+        const dataUrl = await domToWebp(element, {
           backgroundColor: '#ffffff',
           scale: 2,
+          quality: 0.85,
         });
+        const ext = dataUrl.startsWith('data:image/webp') ? 'webp' : 'png';
 
         const link = document.createElement('a');
-        link.download = `kancolle-plan-${new Date().toISOString().slice(0,10)}.jpg`;
+        link.download = `kancolle-plan-${new Date().toISOString().slice(0,10)}.${ext}`;
         link.href = dataUrl;
         link.click();
         
