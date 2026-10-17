@@ -267,7 +267,9 @@ export default function KanColleBlueprintTable() {
         const ext = dataUrl.startsWith('data:image/webp') ? 'webp' : 'png';
 
         const link = document.createElement('a');
-        link.download = `kancolle-plan-${new Date().toISOString().slice(0,10)}.${ext}`;
+        // 로컬 시간 기준 YYYY-MM-DD (toISOString은 UTC라 KST 오전 9시 전엔 전날 날짜가 됨)
+        const today = new Date().toLocaleDateString('sv-SE');
+        link.download = `kancolle-plan-${today}.${ext}`;
         link.href = dataUrl;
         link.click();
         
